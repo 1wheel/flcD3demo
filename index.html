@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>/* CSS */</style>
+<body>
+
+
+<div id="histogram">
+    <span>Histogram</span>
+    <a class="reset" href="javascript:histogramChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+	<div class = "clearfix"></div>
+</div>
+
+<div id="naturePie">
+    <span>Nature of Case</span>
+    <a class="reset" href="javascript:naturePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+	<div class = "clearfix"></div>
+</div>
+
+</body>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="crossfilter.js"></script>
+<script src="dc.min.js"></script>
+<link rel="stylesheet" type="text/css" href="dc.css"/>
+
+<script>
+var format = d3.time.format("%Y-%m-%d"),
+	histogramChart = dc.barChart("#histogram"),
+	naturePieChart = dc.pieChart("#naturePie"),
+	data,
+	cases,
+	url = "http://www.federallitigationclearinghouse.com/php/graphQuery.php?action=case_person_party&query=A+C+and+S%2C+Inc.";
+	url = "AJames.json";
+
+d3.json(url, function(json){
+		data = [];
+		z = json;
+		json.aaData.forEach(function(d){
+			var tempCase = {};
+			var varNames = ['flcNum', 'name', 'court', 'pJudge', 'rJudge', 'nature', 'statute', 'disposition', 'filed', 'terminated'];
+			varNames.forEach(function(varName, i){
+				tempCase[varName] =  d[i];
+			});
+			tempCase.filed = format.parse(tempCase.filed);
+			tempCase.terminated = format.parse(tempCase.terminated);
+			data.push(tempCase);
+		});	
+	cases = crossfilter(data);
+
+	var tempNature = cases.dimension(function(d){return d.nature;});
+	var natureKeys = [];
+	tempNature.group().top(4).forEach(function(d){natureKeys.push(d.key);});
+
+    all = cases.groupAll(),
+	nature = cases.dimension(function(d){
+		return (natureKeys.indexOf(d.nature) != -1) ? d.nature : "Other";
+	});
+	natures = nature.group(),
+	natureGroup = nature.group().reduceSum(function(d){return 1;}),
+	volumeByDay = cases.dimension(function(d){return d3.time.day(d.filed);}),
+	volumeByDayGroup = volumeByDay.group().reduceSum(function(d){return 1;}),
+	judge = cases.dimension(function(d){return d.judge})
+	judges = judge.group();
+
+	histogramChart
+		.width(800)
+		.height(200)
+	    .dimension(volumeByDay) // set dimension
+	    .group(volumeByDayGroup) // set group
+	    .x(d3.time.scale().domain([new Date(1986, 0, 1), new Date(2003, 11, 31)]))
+	    .round(d3.time.month.round)
+	    .xUnits(d3.time.months);
+
+    naturePieChart
+		.width(200)
+        .height(200)
+        .transitionDuration(200)
+        .radius(80)
+        .innerRadius(30)
+        .dimension(nature)
+        .group(natureGroup)
+        .colors(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'])
+        .label(function(d){return d.data.value;})
+
+	dc.renderAll();
+});
+
+</script>
