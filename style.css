@@ -1,0 +1,33 @@
+.pieChart{
+	width: 240px;
+	display:inline-block;
+}
+
+.colorBlockDiv{
+	width: 249px;
+	display:inline-block;
+	height: 225px;
+	vertical-align: top;
+}
+
+.colorBlock{
+	height: 15px;
+	width: 15px;
+	display: inline-block;
+	margin-right: 20px;
+}
+
+.legendLine{
+	line-height: 250%;
+}
+
+.legendSpace{
+	height: 20px;
+}
+
+#widthTest{
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+}
