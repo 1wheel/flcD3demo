@@ -38,26 +38,51 @@ d3.json(url, function(json){
 	judge = cases.dimension(function(d){return d.judge});
 	judges = judge.group();
 
-	histogramChart
-		.width(800)
-		.height(200)
-	    .dimension(volumeByDay) 
-	    .group(volumeByDayGroup) 
-	    .x(d3.time.scale().domain([new Date(1986, 0, 1), new Date(2003, 11, 31)]))
-	    .round(d3.time.month.round)
-	    .xUnits(d3.time.months);
+	bars = volumeByDay.group().all();
+	histogramChart.width(420)
+        .height(200)
+        .margins({top: 10, right: 50, bottom: 30, left: 40})
+        .dimension(volumeByDay)
+        .group(volumeByDayGroup)
+        .elasticY(true)
+        .centerBar(false)
+        .gap(1)
+        .round(dc.round.floor)
+        .xUnits(d3.time.years)
+	    .x(d3.time.scale().domain([d3.time.year.round(bars[0].key), d3.time.year.round(bars[bars.length-1].key)]))
+        .renderHorizontalGridLines(false)
+        .yAxis().tickFormat(d3.format("d"));
 
     naturePieChart
 		.width(200)
         .height(200)
         .transitionDuration(200)
         .radius(100)
-        .innerRadius(60)
+        .innerRadius(70)
         .dimension(nature)
         .group(natureGroup)
         .colors(colors)
         .label(function(d){return d.data.value;})
     addBlocks('naturePieBlocks', colors, natureKeys);
+
+	dc.dataTable("#data-table")
+	    .dimension(volumeByDay)
+	    .group(function(d) {return 1;})
+	    .size(10)
+	    .columns([
+	        function(d) { return '<a href="http://www.federallitigationclearinghouse.com/php/casePage.php?caseTrackNo=' + d.flcNum + '">' + d.flcNum + '</a>'; },
+	        function(d) { return d.name; },
+	        function(d) { return d.court; },
+	        function(d) { return d.pJudge; },
+	        function(d) { return d.rJudge; },
+	        function(d) { return d.nature; },
+	        function(d) { return d.statute; },
+	        function(d) { return d.disposition; },
+	        function(d) { return d3.time.format("%Y-%M-%d")(d.filed); },
+	        function(d) { return d3.time.format("%Y-%M-%d")(d.terminated); }
+	    ])
+	    .order(d3.ascending);
+
 	dc.renderAll();
 });
 

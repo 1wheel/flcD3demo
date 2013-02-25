@@ -3,32 +3,52 @@
 <style>/* CSS */</style>
 <body>
 
-<div id="histogram">
-    <span>Histogram</span>
-    <a class="reset" href="javascript:histogramChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-    <span class="reset" style="display: none;"><span class="filter"></span></span>
-	<div class = "clearfix"></div>
-</div>
-
-<div id = "nature" class = "pieChartContainer">
-	<div id="naturePie" class="pieChart">
-	    <span>Nature of Case</span>
-	    <a class="reset" href="javascript:naturePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+<div id = "graphs">
+	<div id="histogram">
+	    <span class="graphTitle">Histogram</span>
+	    <a class="reset" href="javascript:histogramChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 	    <span class="reset" style="display: none;"></span>
 		<div class = "clearfix"></div>
 	</div>
 
-	<div class = "colorBlockDiv" id="naturePieBlocks">
+	<div id = "nature"  class = "pieChartContainer">
+		<div id="naturePie" class="pieChart">
+		    <span class="graphTitle">Nature of Case</span>
+		    <a class="reset" href="javascript:naturePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+		    <span class="reset" style="display: none;"></span>
+			<div class = "clearfix"></div>
+		</div>
+
+		<div class = "colorBlockDiv" class="graphTitle" id="naturePieBlocks">
+		</div>
 	</div>
 </div>
+
+<table id="data-table" class="table table-hover dc-data-table">
+	<thead>
+	    <tr class="header">
+	        <th>FLC No.</th>
+	        <th>Case Name</th>
+	        <th>Court</th>
+	        <th>Presiding Judge </th>
+	        <th>Referral Judge</th>
+	        <th>Nature of Suit</th>
+	        <th>U.S. Civil Statute</th>
+	        <th>Disposition</th>
+	        <th>Date Filed</th>
+	        <th>Date Terminated</th>
+	    </tr>
+	</thead>
+</table>
 
 <div id="widthTest" class="legendLine"></div>
 
 </body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script src="crossfilter.js"></script>
-<script src="dc.min.js"></script>
+<script src="dc.js"></script>
 <link rel="stylesheet" type="text/css" href="dc.css"/>
 <link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" type="text/css" href="bootsatrap.min.css"/>
 
 <script src="graph.js"></script>
