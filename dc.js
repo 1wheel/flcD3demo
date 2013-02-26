@@ -1895,6 +1895,7 @@ dc.pieChart = function(parent, chartGroup) {
     function createSlicePath(slicesEnter, arc) {
         var slicePath = slicesEnter.append("path")
             .attr("fill", function(d, i) {
+                console.log(_chart.getColor(d, i));
                 return _chart.getColor(d, i);
             })
             .on("click", onClick)
@@ -2190,9 +2191,6 @@ dc.barChart = function(parent, chartGroup) {
     }
 
     function getNumberOfBars() {        
-        console.log(_chart.refocused());
-        console.log(_chart.xUnitCount());
-
 
         if(_numberOfBars == null || _chart.refocused())
             _numberOfBars = _chart.xUnitCount();
@@ -2212,7 +2210,6 @@ dc.barChart = function(parent, chartGroup) {
         if (isNaN(w) || w < MIN_BAR_WIDTH)
             w = MIN_BAR_WIDTH;
 
-        console.log({"_chart.xAxisLength()": _chart.xAxisLength(), "numberOfBars": numberOfBars, w: w, 'gap': _gap});
         return w;
     }
 

@@ -5,23 +5,62 @@
 
 <div id = "graphs">
 	<div id="histogram">
-	    <span class="graphTitle">Histogram</span>
+	    <span id = "histTitle" class="graphTitle">Histogram</span>
 	    <a class="reset" href="javascript:histogramChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 	    <span class="reset" style="display: none;"></span>
 		<div class = "clearfix"></div>
 	</div>
 
-	<div id = "nature"  class = "pieChartContainer">
-		<div id="naturePie" class="pieChart">
-		    <span class="graphTitle">Nature of Case</span>
-		    <a class="reset" href="javascript:naturePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-		    <span class="reset" style="display: none;"></span>
-			<div class = "clearfix"></div>
+	<div id = "pieCharts">
+		<div id = "nature"  class = "pieChartContainer">
+			<div id="naturePie" class="pieChart">
+			    <span class="graphTitle">Nature of Case</span>
+			    <a class="reset" href="javascript:naturePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+			    <span class="reset" style="display: none;"></span>
+				<div class = "clearfix"></div>
+			</div>
+
+			<div class = "colorBlockDiv" class="graphTitle" id="naturePieBlocks">
+			</div>
 		</div>
 
-		<div class = "colorBlockDiv" class="graphTitle" id="naturePieBlocks">
+		<div id = "pJudge"  class = "pieChartContainer">
+			<div id="pJudgePie" class="pieChart">
+			    <span class="graphTitle">Presiding Judge</span>
+			    <a class="reset" href="javascript:pJudgePieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+			    <span class="reset" style="display: none;"></span>
+				<div class = "clearfix"></div>
+			</div>
+
+			<div class = "colorBlockDiv" class="graphTitle" id="pJudgePieBlocks">
+			</div>
+		</div>
+
+		<div id = "disposition"  class = "pieChartContainer">
+			<div id="dispositionPie" class="pieChart">
+			    <span class="graphTitle">Disposition</span>
+			    <a class="reset" href="javascript:dispositionPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+			    <span class="reset" style="display: none;"></span>
+				<div class = "clearfix"></div>
+			</div>
+
+			<div class = "colorBlockDiv" class="graphTitle" id="dispositionPieBlocks">
+			</div>
+		</div>
+
+		<div id = "court"  class = "pieChartContainer">
+			<div id="courtPie" class="pieChart">
+			    <span class="graphTitle">Court</span>
+			    <a class="reset" href="javascript:courtPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+			    <span class="reset" style="display: none;"></span>
+				<div class = "clearfix"></div>
+			</div>
+
+			<div class = "colorBlockDiv" class="graphTitle" id="courtPieBlocks">
+			</div>
 		</div>
 	</div>
+
 </div>
 
 <table id="data-table" class="table table-hover dc-data-table">
@@ -49,6 +88,5 @@
 <script src="dc.js"></script>
 <link rel="stylesheet" type="text/css" href="dc.css"/>
 <link rel="stylesheet" type="text/css" href="style.css"/>
-<link rel="stylesheet" type="text/css" href="bootsatrap.min.css"/>
 
 <script src="graph.js"></script>

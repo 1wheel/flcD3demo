@@ -1,6 +1,5 @@
 var format = d3.time.format("%Y-%m-%d"),
 	histogramChart = dc.barChart("#histogram"),
-	naturePieChart = dc.pieChart("#naturePie"),
 	data,
 	cases,
 	url = "http://www.federallitigationclearinghouse.com/php/graphQuery.php?action=case_person_party&query=A+C+and+S%2C+Inc.";
@@ -21,29 +20,16 @@ d3.json(url, function(json){
 			data.push(tempCase);
 		});	
 	cases = crossfilter(data);
+	
+	volume = cases.dimension(function(d){return d3.time.year(d.filed);});
+	volumeGroup = volume.group().reduceSum(function(d){return 1;});
 
-	var tempNature = cases.dimension(function(d){return d.nature;});
-	var natureKeys = [];
-	tempNature.group().top(4).forEach(function(d){natureKeys.push(d.key);});
-
-    all = cases.groupAll(),
-	nature = cases.dimension(function(d){
-		return (natureKeys.indexOf(d.nature) != -1) ? d.nature : "Other";
-	});
-	natureKeys = fixKeyArray(natureKeys);
-	natures = nature.group();
-	natureGroup = nature.group().reduceSum(function(d){return 1;});
-	volumeByDay = cases.dimension(function(d){return d3.time.year(d.filed);});
-	volumeByDayGroup = volumeByDay.group().reduceSum(function(d){return 1;});
-	judge = cases.dimension(function(d){return d.judge});
-	judges = judge.group();
-
-	bars = volumeByDay.group().all();
-	histogramChart.width(420)
-        .height(200)
+	bars = volume.group().all();
+	histogramChart.width(1100)
+        .height(230)
         .margins({top: 10, right: 50, bottom: 30, left: 40})
-        .dimension(volumeByDay)
-        .group(volumeByDayGroup)
+        .dimension(volume)
+        .group(volumeGroup)
         .elasticY(true)
         .centerBar(false)
         .gap(1)
@@ -53,20 +39,8 @@ d3.json(url, function(json){
         .renderHorizontalGridLines(false)
         .yAxis().tickFormat(d3.format("d"));
 
-    naturePieChart
-		.width(200)
-        .height(200)
-        .transitionDuration(200)
-        .radius(100)
-        .innerRadius(70)
-        .dimension(nature)
-        .group(natureGroup)
-        .colors(colors)
-        .label(function(d){return d.data.value;})
-    addBlocks('naturePieBlocks', colors, natureKeys);
-
 	dc.dataTable("#data-table")
-	    .dimension(volumeByDay)
+	    .dimension(volume)
 	    .group(function(d) {return 1;})
 	    .size(10)
 	    .columns([
@@ -83,6 +57,48 @@ d3.json(url, function(json){
 	    ])
 	    .order(d3.ascending);
 
+	//several pie charts are being drawn; this function is used
+    function addPieChart(id, key, colors){
+		tempNature = cases.dimension(function(d){return d[key];});
+		var natureKeys = [];
+		tempNature.group().top(4).forEach(function(d){natureKeys.push(d.key);});
+
+		console.log(natureKeys);
+	    all = cases.groupAll(),
+		nature = cases.dimension(function(d){
+			return (natureKeys.indexOf(d[key]) != -1) ? d[key] : "Other";
+		});
+		if (nature.group().all().length > natureKeys.length){
+			natureKeys.push("Other");
+		}
+		natures = nature.group();
+		natureGroup = nature.group().reduceSum(function(d){return 1;});
+
+	    addBlocks(id + 'Blocks', colors, natureKeys);
+
+	    return dc.pieChart("#" + id)
+			.width(200)
+	        .height(200)
+	        .transitionDuration(200)
+	        .radius(100)
+	        .innerRadius(70)
+	        .dimension(nature)
+	        .group(natureGroup)
+	        .colors(colors)
+	        .colorDomain([0,5])
+	        .colorAccessor(function(d){
+	        	console.log(natureKeys);
+	        	console.log(d.data.key);
+	        	console.log(colors[natureKeys.indexOf(d.data.key)]);
+	        	return natureKeys.indexOf(d.data.key);
+	        })
+	        .label(function(d){return d.data.value;});
+	}
+	naturePieChart = addPieChart('naturePie', 'nature', colors);
+	pJudgePieChart = addPieChart('pJudgePie', 'pJudge', colors);
+	courtPieChart = addPieChart('courtPie', 'court', colors);
+	dispositionPieChart = addPieChart('dispositionPie', 'disposition', colors);
+
 	dc.renderAll();
 });
 
@@ -93,16 +109,9 @@ function addBlocks(divId, colors, names){
 	for (var i = 0; i < names.length; i++){
 		html = html + '<div class = "legendLine">'
 		html = html + '<div class = "colorBlock" style = "background-color:' + colors[i] + ';"></div>';
-		html = html + shortenString(names[i], 180) + '</div>';
+		html = html + shortenString(names[i], 300) + '</div>';
 	}
 	document.getElementById(divId).innerHTML = html;
-	console.log(html);
-}
-
-//returns key array with 'other' 
-function fixKeyArray(keys){
-	keys.push('Other');
-	return keys;
 }
 
 function shortenString(str, width){
@@ -111,7 +120,6 @@ function shortenString(str, width){
 	while (textWidth(printStr + (shortened ? '...' : '')) > width){
 		shortened = true;
 		printStr = printStr.slice(0,-1);
-		console.log(printStr);
 	}
 	return printStr + (shortened ? '...' : '');
 }
